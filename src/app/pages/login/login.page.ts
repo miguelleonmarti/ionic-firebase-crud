@@ -10,6 +10,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./login.page.scss']
 })
 export class LoginPage implements OnInit {
+
   public loginForm: FormGroup;
   public loading: HTMLIonLoadingElement;
 

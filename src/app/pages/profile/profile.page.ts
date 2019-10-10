@@ -7,12 +7,11 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.page.html',
-  styleUrls: ['./profile.page.scss'],
+  styleUrls: ['./profile.page.scss']
 })
 export class ProfilePage implements OnInit {
 
-  public userProfile: any;
-  public birthDate: Date;
+  public userProfile: any = {};
 
   constructor(
     private alertCtrl: AlertController,
@@ -22,17 +21,15 @@ export class ProfilePage implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.profileService
-    .getUserProfile()
-    .get()
-    .then( userProfileSnapshot => {
-      this.userProfile = userProfileSnapshot.data();
-      this.birthDate = userProfileSnapshot.data().birthDate;
+    this.profileService.getUserProfile().then(userProfileSnapshot => {
+      if (userProfileSnapshot.data()) {
+        this.userProfile = userProfileSnapshot.data();
+      }
     });
   }
 
   logOut(): void {
-    this.authService.logoutUser().then( () => {
+    this.authService.logoutUser().then(() => {
       this.router.navigateByUrl('login');
     });
   }
@@ -45,14 +42,14 @@ export class ProfilePage implements OnInit {
           type: 'text',
           name: 'firstName',
           placeholder: 'Your first name',
-          value: this.userProfile.firstName,
+          value: this.userProfile.firstName
         },
         {
           type: 'text',
           name: 'lastName',
           placeholder: 'Your last name',
-          value: this.userProfile.lastName,
-        },
+          value: this.userProfile.lastName
+        }
       ],
       buttons: [
         { text: 'Cancel' },
@@ -60,9 +57,9 @@ export class ProfilePage implements OnInit {
           text: 'Save',
           handler: data => {
             this.profileService.updateName(data.firstName, data.lastName);
-          },
-        },
-      ],
+          }
+        }
+      ]
     });
     await alert.present();
   }
@@ -78,7 +75,7 @@ export class ProfilePage implements OnInit {
     const alert = await this.alertCtrl.create({
       inputs: [
         { type: 'text', name: 'newEmail', placeholder: 'Your new email' },
-        { name: 'password', placeholder: 'Your password', type: 'password' },
+        { name: 'password', placeholder: 'Your password', type: 'password' }
       ],
       buttons: [
         { text: 'Cancel' },
@@ -93,9 +90,9 @@ export class ProfilePage implements OnInit {
               .catch(error => {
                 console.log('ERROR: ' + error.message);
               });
-          },
-        },
-      ],
+          }
+        }
+      ]
     });
     await alert.present();
   }
@@ -104,7 +101,7 @@ export class ProfilePage implements OnInit {
     const alert = await this.alertCtrl.create({
       inputs: [
         { name: 'newPassword', placeholder: 'New password', type: 'password' },
-        { name: 'oldPassword', placeholder: 'Old password', type: 'password' },
+        { name: 'oldPassword', placeholder: 'Old password', type: 'password' }
       ],
       buttons: [
         { text: 'Cancel' },
@@ -115,11 +112,10 @@ export class ProfilePage implements OnInit {
               data.newPassword,
               data.oldPassword
             );
-          },
-        },
-      ],
+          }
+        }
+      ]
     });
     await alert.present();
   }
-
 }

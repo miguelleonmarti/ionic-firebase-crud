@@ -43,8 +43,9 @@
       <ion-datetime
         displayFormat="MMM D, YYYY"
         pickerFormat="D MMM YYYY"
-        [(ngModel)]="birthDate"
-        (ionChange)="updateDOB(birthDate)"
+        [(ngModel)]="userProfile.birthDate"
+        (ionChange)="updateDOB(userProfile.birthDate)"
+        (click)="updateDOB(userProfile.birthDate)"
       >
       </ion-datetime>
     </ion-item>

@@ -1,17 +1,37 @@
-import { Injectable } from "@angular/core";
+import { Injectable } from '@angular/core';
 
 // firebase
-import * as firebase from "firebase/app";
-import "firebase/auth";
-import "firebase/firestore";
+import * as firebase from 'firebase/app';
+import 'firebase/auth';
+import 'firebase/firestore';
 
 @Injectable({
-  providedIn: "root"
+  providedIn: 'root'
 })
 export class AuthService {
+
+  public userId: string;
+
   constructor() {}
 
   // firebase methods
+
+  getUser(): Promise<firebase.User> {
+    return new Promise((resolve, reject) => {
+      firebase.auth().onAuthStateChanged(
+        user => {
+          if (user) {
+            resolve(user);
+          } else {
+            reject(null);
+          }
+        },
+        error => {
+          reject(error);
+        }
+      );
+    });
+  }
 
   loginUser(
     email: string,

@@ -5,70 +5,62 @@ import * as firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore';
 
+// services
+import { AuthService } from './auth.service';
+
 @Injectable({
   providedIn: 'root'
 })
 export class ProfileService {
-  userProfile: firebase.firestore.DocumentReference;
-  currentUser: firebase.User;
+  public userProfile: firebase.firestore.DocumentReference;
+  public currentUser: firebase.User;
 
-  constructor() {
-    firebase.auth().onAuthStateChanged(user => {
-      if (user) {
-        this.currentUser = user;
-        this.userProfile = firebase.firestore().doc(`/userProfile/${user.uid}`);
-      }
-    });
+  constructor(private authService: AuthService) {}
+
+  async getUserProfile(): Promise<firebase.firestore.DocumentSnapshot> {
+    const user: firebase.User = await this.authService.getUser();
+    this.currentUser = user;
+    this.userProfile = firebase.firestore().doc(`userProfile/${user.uid}`);
+    return this.userProfile.get();
   }
 
-  getUserProfile(): firebase.firestore.DocumentReference {
-    return this.userProfile;
+  updateName(firstName: string, lastName: string): Promise<void> {
+    return this.userProfile.set({ firstName, lastName }, { merge: true });
   }
 
-  updateName(firstName: string, lastName: string): Promise<any> {
-    return this.userProfile.update({ firstName, lastName });
-  }
-
-  /**
-   * Update the user's birthday
-   * @param birthDate string
-   */
   updateDOB(birthDate: string): Promise<any> {
-    return this.userProfile.update({ birthDate });
+    return this.userProfile.set({ birthDate }, { merge: true });
   }
 
-  updateEmail(newEmail: string, password: string): Promise<any> {
-    const credential: firebase.auth.AuthCredential = firebase.auth.EmailAuthProvider.credential(
-      this.currentUser.email,
-      password
-    );
-    return this.currentUser
-      .reauthenticateWithCredential(credential)
-      .then(() => {
-        this.currentUser.updateEmail(newEmail).then(() => {
-          this.userProfile.update({ email: newEmail });
-        });
-      })
-      .catch(error => {
-        console.log(error);
-      });
+  async updateEmail(newEmail: string, password: string): Promise<void> {
+    try {
+      const credential: firebase.auth.AuthCredential = firebase.auth.EmailAuthProvider.credential(
+        this.currentUser.email,
+        password
+      );
+
+      await this.currentUser.reauthenticateWithCredential(credential);
+      await this.currentUser.updateEmail(newEmail);
+      return this.userProfile.set({ email: newEmail }, { merge: true });
+    } catch (error) {
+      console.error(error);
+    }
   }
 
-  updatePassword(newPassword: string, oldPassword: string): Promise<any> {
-    const credential: firebase.auth.AuthCredential = firebase.auth.EmailAuthProvider.credential(
-      this.currentUser.email,
-      oldPassword
-    );
+  async updatePassword(
+    newPassword: string,
+    oldPassword: string
+  ): Promise<void> {
+    try {
+      const credential: firebase.auth.AuthCredential = firebase.auth.EmailAuthProvider.credential(
+        this.currentUser.email,
+        oldPassword
+      );
 
-    return this.currentUser
-      .reauthenticateWithCredential(credential)
-      .then(() => {
-        this.currentUser.updatePassword(newPassword).then(() => {
-          console.log('Password Changed');
-        });
-      })
-      .catch(error => {
-        console.error(error);
-      });
+      await this.currentUser.reauthenticateWithCredential(credential);
+      return this.currentUser.updatePassword(newPassword);
+    } catch (error) {
+      console.error(error);
+    }
   }
 }
