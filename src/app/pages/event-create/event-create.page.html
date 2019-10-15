@@ -7,7 +7,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content padding>
+<ion-content>
   <ion-item>
     <ion-label position="stacked">Event Name</ion-label>
     <ion-input
@@ -42,10 +42,9 @@
     <ion-label>Event Date</ion-label>
     <ion-datetime
       [(ngModel)]="eventDate"
-      displayFormat="D MMM, YY"
-      pickerFormat="DD MMM YYYY"
-      min="2017"
-      max="2020-12-31"
+      displayFormat="DD/MM/YYYY"
+      pickerFormat="DD/MM/YYYY"
+      value="01/01/2000"
     >
     </ion-datetime>
   </ion-item>

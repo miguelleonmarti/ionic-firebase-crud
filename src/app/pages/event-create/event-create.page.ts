@@ -12,6 +12,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./event-create.page.scss']
 })
 export class EventCreatePage implements OnInit {
+
   constructor(private router: Router, private eventService: EventService) {}
 
   ngOnInit() {}
@@ -31,8 +32,7 @@ export class EventCreatePage implements OnInit {
       return;
     }
 
-    this.eventService
-      .createEvent(eventName, eventDate, eventPrice, eventCost)
+    this.eventService.createEvent(eventName, eventDate, eventPrice, eventCost)
       .then(() => this.router.navigateByUrl(''));
   }
 }

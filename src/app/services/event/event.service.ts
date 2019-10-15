@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 // firebase
-import * as firebase from "firebase/app";
+import * as firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore';
 
@@ -41,5 +41,16 @@ export class EventService {
 
   getEventDetail(eventId: string): firebase.firestore.DocumentReference {
     return this.eventListRef.doc(eventId);
+  }
+
+  addGuest(
+    guestName: string,
+    eventId: string,
+    eventPrice: number
+  ): Promise<firebase.firestore.DocumentReference> {
+    return this.eventListRef
+      .doc(eventId)
+      .collection('guestList')
+      .add({ guestName });
   }
 }
